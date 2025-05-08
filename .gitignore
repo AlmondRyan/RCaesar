@@ -1,0 +1,6 @@
+backend/cmake-build-debug
+backend/cmake-build-release
+backend/nlohmann
+backend/websocketpp
+
+RCaesar-SingleFile.cpp

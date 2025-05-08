@@ -1,0 +1,8 @@
+{
+  "request": "encrypt",
+  "method": "type0",
+  "params": {
+    "string": "abc",
+    "move-steps": 2
+  }
+}
