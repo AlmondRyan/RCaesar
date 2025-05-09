@@ -26,6 +26,7 @@ import {
     Toolbar,
     ToolbarButton,
     ToolbarDivider,
+    Text,
     type ToolbarProps,
     useId,
     webLightTheme,
@@ -34,7 +35,7 @@ import {
     DialogSurface,
     DialogTitle,
     DialogBody,
-    DialogActions
+    DialogActions, SpinButton
 } from "@fluentui/react-components";
 import React, {useState} from "react";
 import {
@@ -54,6 +55,10 @@ function App({DropDownProps, ToolBarProps}: Props) {
     const [showDialog, setShowDialog] = useState(false);
     const [showWarning, setShowWarning] = useState(false);
     const [warningMessage, setWarningMessage] = useState('');
+    const [selectedEncrypt, setSelectedEncrypt] = useState<string | undefined>(undefined);
+    const [selectedDecrypt, setSelectedDecrypt] = useState<string | undefined>(undefined);
+    const [groupSize, setGroupSize] = React.useState<number>(0);
+    const [focusedIndex, setFocusedIndex] = React.useState<number | null>(null);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
@@ -148,7 +153,8 @@ function App({DropDownProps, ToolBarProps}: Props) {
                                 </MessageBar>
                             )}
 
-                            <Field label="Text need to encrypt/decrypt">
+                            <Field label="Text need to encrypt/decrypt"
+                            style={{width: "50%"}}>
                                 <Input
                                     value={inputText}
                                     onChange={handleInputChange}
@@ -160,23 +166,31 @@ function App({DropDownProps, ToolBarProps}: Props) {
                                 <DialogSurface>
                                     <DialogTitle>Non-English Characters Detected</DialogTitle>
                                     <DialogBody>
-                                        Your input contains non-English characters. Would you like to skip them or delete them?
+                                        Your input contains non-English characters. Would you like to skip them or
+                                        delete them?
                                     </DialogBody>
                                     <DialogActions>
-                                        <Button appearance="secondary" onClick={() => handleDialogAction('skip')}>Skip</Button>
-                                        <Button appearance="primary" onClick={() => handleDialogAction('delete')}>Delete</Button>
-                                        <Button appearance="secondary" onClick={() => handleDialogAction('cancel')}>Cancel</Button>
+                                        <Button appearance="secondary"
+                                                onClick={() => handleDialogAction('skip')}>Skip</Button>
+                                        <Button appearance="primary"
+                                                onClick={() => handleDialogAction('delete')}>Delete</Button>
+                                        <Button appearance="secondary"
+                                                onClick={() => handleDialogAction('cancel')}>Cancel</Button>
                                     </DialogActions>
                                 </DialogSurface>
                             </Dialog>
 
-                            <Dropdown aria-labelledby={dropdownId}
-                                      placeholder={"Select an Encrypt Method"}
-                                      style={{
-                                          marginTop: "24px",
-                                          marginRight: "8px"
-                                      }}
-                                      {...DropDownProps}
+                            <Dropdown
+                                aria-labelledby={dropdownId}
+                                placeholder={"Select an Encrypt Method"}
+                                defaultValue={'---'}
+                                // disabled={selectedDecrypt !== '---'}
+                                style={{
+                                    marginTop: "24px",
+                                    marginRight: "8px"
+                                }}
+                                onOptionSelect={(e, data) => setSelectedEncrypt(data.optionValue)}
+                                {...DropDownProps}
                             >
                                 {encrypt_options.map((e_option) => (
                                     <Option key={e_option} value={e_option}>
@@ -188,10 +202,13 @@ function App({DropDownProps, ToolBarProps}: Props) {
                             <Dropdown
                                 aria-labelledby={dropdownId}
                                 placeholder={"Select an Decrypt Method"}
+                                defaultValue={'---'}
+                                // disabled={selectedEncrypt !== '---'}
                                 style={{
                                     marginTop: "24px",
                                     marginRight: "8px"
                                 }}
+                                onOptionSelect={(e, data) => setSelectedDecrypt(data.optionValue)}
                                 {...DropDownProps}
                             >
                                 {decrypt_options.map((d_option) => (
@@ -200,6 +217,77 @@ function App({DropDownProps, ToolBarProps}: Props) {
                                     </Option>
                                 ))}
                             </Dropdown>
+
+                            {selectedEncrypt === 'Basic' && (
+                                <div style={{marginTop: "16px"}}>
+                                    <Text>Move Steps </Text>
+                                    <SpinButton label="Move Steps" defaultValue={1} min={1} max={1000}/>
+                                </div>
+                            )}
+
+                            {selectedEncrypt === 'Increasing' && (
+                                <div style={{marginTop: "16px"}}>
+                                    <Text>Initial Move Steps </Text>
+                                    <SpinButton label="Initial Move Steps" defaultValue={1} min={1} max={1000}/>
+                                </div>
+                            )}
+
+                            {selectedEncrypt === 'Group' && (
+                                <div style={{marginTop: "16px"}}>
+                                    <div style={{display: 'flex', alignItems: "center", marginBottom: "12px"}}>
+                                        <Text style={{marginRight: "8px"}}>Group Size</Text>
+                                        <SpinButton
+                                            label="Group Size"
+                                            value={groupSize}
+                                            onChange={(_, data) => setGroupSize(Number(data.value))}
+                                            min={1}
+                                            max={1000}
+                                        />
+                                    </div>
+
+                                    {groupSize > 0 && inputText && (
+                                        <div style={{display: 'flex', gap: '16px'}}>
+                                            <div style={{display: 'flex', flexWrap: 'wrap', gap: '8px'}}>
+                                                {Array.from({length: Math.ceil(inputText.length / groupSize)}, (_, index) => {
+                                                    const group = inputText.slice(index * groupSize, (index + 1) * groupSize);
+                                                    const isFocused = focusedIndex === index;
+
+                                                    return (
+                                                        <div
+                                                            key={index}
+                                                            style={{
+                                                                padding: '8px 12px',
+                                                                borderRadius: '8px',
+                                                                border: `2px solid ${isFocused ? '#0078D4' : '#ccc'}`,
+                                                                backgroundColor: isFocused ? '#E5F1FB' : '#f5f5f5',
+                                                                fontFamily: 'Consolas',
+                                                                minWidth: '40px',
+                                                                textAlign: 'center'
+                                                            }}
+                                                        >
+                                                            {group}
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+
+                                            <div style={{display: 'flex', flexDirection: 'column', gap: '8px'}}>
+                                                {Array.from({length: Math.ceil(inputText.length / groupSize)}, (_, index) => (
+                                                    <SpinButton
+                                                        key={index}
+                                                        label={`Value ${index + 1}`}
+                                                        defaultValue={1}
+                                                        min={0}
+                                                        max={100}
+                                                        onFocus={() => setFocusedIndex(index)}
+                                                        onBlur={() => setFocusedIndex(null)}
+                                                    />
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
 
                             <Field label="Result" style={{marginTop: '16px'}}>
                                 <div style={{display: 'flex', alignItems: 'center'}}>

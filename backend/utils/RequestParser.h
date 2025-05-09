@@ -10,6 +10,10 @@
 #include "caesars/type1.h"
 #include "caesars/type2.h"
 #include "caesars/type3.h"
+#include "caesars/type4.h"
+#include "caesars/type5.h"
+#include "caesars/type6.h"
+#include "caesars/type7.h"
 
 using json = nlohmann::json;
 using server = websocketpp::server<websocketpp::config::asio>;
@@ -17,6 +21,7 @@ using connection_hdl = websocketpp::connection_hdl;
 
 namespace RCaesar {
     class RequestParser {
+    public:
         static json handleRequest(const json &req) {
             if (!req.contains("request") ||
                 !req.contains("method") ||

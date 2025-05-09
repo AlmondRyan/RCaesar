@@ -1,5 +1,5 @@
-#ifndef UTILS_H
-#define UTILS_H
+#ifndef RC_UTILS_H
+#define RC_UTILS_H
 
 #include "Base64Decoder.h"
 #include "Exceptions.h"

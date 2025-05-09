@@ -6,7 +6,8 @@ set(CMAKE_CXX_STANDARD 11)
 
 #find_package(Boost REQUIRED COMPONENTS system thread)
 
-add_executable(RCaesar main.cpp
+add_executable(RCaesar
+#        main.cpp
         utils/ColorTextManager.cpp
         utils/ColorTextManager.h
         utils/Exceptions.h
@@ -30,6 +31,7 @@ add_executable(RCaesar main.cpp
         caesars/type6.h
         caesars/type7.h
         utils/RequestParser.h
+        main-websocket-server.cpp
 )
 
 target_include_directories(RCaesar PRIVATE
