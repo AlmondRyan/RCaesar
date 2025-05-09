@@ -1,0 +1,12 @@
+{
+  "request": "encrypt",
+  "method": "type2",
+  "params": {
+    "group-size": 2,
+    "string": "abab",
+    "moveSteps": [
+      1,
+      2
+    ]
+  }
+}

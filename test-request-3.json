@@ -1,0 +1,9 @@
+{
+  "request": "encrypt",
+  "method": "type3",
+  "params": {
+    "customAlphabet": "bcdefghijklmnopqrstuvwxyza",
+    "input": "test",
+    "shiftSteps": 3
+  }
+}

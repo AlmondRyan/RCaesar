@@ -1,3 +1,7 @@
+// ============ App.tsx =================== TypeScript JSX ===================== //
+// Copyright (c) 2025 Remimwen (Almond "NvKopres" Ryan)
+// ============================================================================= //
+
 import {
     Button,
     Dropdown,
@@ -34,7 +38,6 @@ import {
 } from "@fluentui/react-components";
 import React, {useState} from "react";
 import {
-    ClearFormatting20Regular,
     ClearFormatting24Regular,
     MoreHorizontal24Filled,
     TextCaseTitle24Regular
