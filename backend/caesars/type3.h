@@ -51,6 +51,29 @@ namespace RCaesar {
 
             return CaesarStatus(RCaesar::Status::SUCCESS, res);
         }
+
+        CaesarStatus type3(std::string customAlphabet, std::string input, int shiftSteps) {
+            ::std::string sheet = customAlphabet, res, inpx = input;
+
+            bool isValid = false;
+            try {
+                isValid = check_encrypt_sheet_valid(sheet);
+            } catch (std::exception &e) {
+                return CaesarStatus(RCaesar::Status::FAILED, "", "Sheet is not valid.");
+            }
+
+            ::std::string inp = to_lower(inpx);
+            int steps = 0;
+
+            for (char i : inp) {
+                if (steps < 0) {
+                    steps = 26 + steps;
+                }
+                res += move_alpha_fwd(i, steps, sheet);
+            }
+
+            return CaesarStatus(RCaesar::Status::SUCCESS, res);
+        }
     }
 }
 

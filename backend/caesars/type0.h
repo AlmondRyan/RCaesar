@@ -38,6 +38,18 @@ namespace RCaesar {
 
             return CaesarStatus(RCaesar::Status::SUCCESS, res);
         }
+
+        CaesarStatus type0(std::string target, int steps) {
+            std::string res;
+            for (char i : target) {
+                if (steps < 0) {
+                    steps = 26 + steps;
+                }
+                res += move_alpha_fwd(i, steps);
+            }
+
+            return CaesarStatus(RCaesar::Status::SUCCESS, res);
+        }
     }
 }
 

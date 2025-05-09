@@ -47,6 +47,28 @@ namespace RCaesar {
 
             return CaesarStatus(RCaesar::Status::SUCCESS, res);
         }
+
+        CaesarStatus type5(std::string text, std::string keyword, bool startFromOne = true) {
+            if (!std::all_of(keyword.begin(), keyword.end(), ::isalpha)) {
+                return CaesarStatus(RCaesar::Status::FAILED, "", "Keyword must contain only letters.");
+            }
+
+            ::std::string inp = to_lower(text);
+            keyword = to_lower(keyword);
+            ::std::string res;
+
+            ::std::vector<int> shifts;
+            for (char c : keyword) {
+                shifts.push_back(c - 'a' + (startFromOne ? 1 : 0));
+            }
+
+            for (size_t i = 0; i < inp.size(); i++) {
+                int shift = shifts[i % shifts.size()];
+                res += move_alpha_fwd(inp[i], shift);
+            }
+
+            return CaesarStatus(RCaesar::Status::SUCCESS, res);
+        }
     }
 }
 

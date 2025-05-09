@@ -77,6 +77,30 @@ namespace RCaesar {
 
             return CaesarStatus(RCaesar::Status::SUCCESS, res);
         }
+
+        CaesarStatus type2(int groupSize, std::string input, std::vector<int> moveSteps) {
+            std::string inpx = input;
+            ::std::vector<::std::string> splited;
+            ::std::string inp = to_lower(inpx);
+            ::std::string res;
+
+            splited = split_size(groupSize, inp);
+
+            int totalGroups = static_cast<int>(splited.size());
+            int moveStepCount = static_cast<int>(moveSteps.size());
+
+            for (int i = 0; i < totalGroups; ++i) {
+                const auto& group = splited[i];
+                int step = moveSteps[i % moveStepCount];
+                step = ((step % 26) + 26) % 26;
+
+                for (char ch : group) {
+                    res += move_alpha_fwd(ch, step);
+                }
+            }
+
+            return CaesarStatus(RCaesar::Status::SUCCESS, res);
+        }
     }
 }
 

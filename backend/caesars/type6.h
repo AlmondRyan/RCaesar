@@ -36,6 +36,20 @@ namespace RCaesar {
             }
             return CaesarStatus(RCaesar::Status::SUCCESS, res);
         }
+
+        CaesarStatus type6(std::string text, int steps) {
+            ::std::string res;
+            ::std::string inp = to_lower(text);
+            
+            if (steps < 0) {
+                steps = 26 + steps;
+            }
+            
+            for (int i = 0; i < inp.size(); i++) {
+                res += move_alpha_bwd(inp.at(i), steps);
+            }
+            return CaesarStatus(RCaesar::Status::SUCCESS, res);
+        }
     }
 }
 
