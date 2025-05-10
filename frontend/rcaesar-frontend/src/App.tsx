@@ -35,7 +35,7 @@ import {
     DialogSurface,
     DialogTitle,
     DialogBody,
-    DialogActions, SpinButton
+    DialogActions, SpinButton, Checkbox
 } from "@fluentui/react-components";
 import React, {useState} from "react";
 import {
@@ -97,7 +97,6 @@ function App({DropDownProps, ToolBarProps}: Props) {
     const decrypt_options = [
         "Basic",
         "Increasing",
-        "Force",
         "---"
     ];
 
@@ -120,10 +119,25 @@ function App({DropDownProps, ToolBarProps}: Props) {
                             aria-label={"Remove Unsupported Characters"}
                             icon={<ClearFormatting24Regular/>}
                         />
-                        <ToolbarButton
-                            aria-label={"Language"}
-                            icon={<TextCaseTitle24Regular/>}
-                        />
+                        <ToolbarDivider/>
+                        <Menu>
+                            <MenuTrigger>
+                                <ToolbarButton aria-label={"Language"}
+                                               icon={<TextCaseTitle24Regular />} />
+                            </MenuTrigger>
+
+                            <MenuPopover>
+                                <MenuList>
+                                    <MenuItem>English (USA, UK, Australia etc.)</MenuItem>
+                                    <MenuItem>Simplified Chinese (China Mainland)</MenuItem>
+                                    <MenuItem>Traditional Chinese (Guangdong, Hong Kong, Macau, Taiwan)</MenuItem>
+                                    <MenuItem>Japanese (Japan)</MenuItem>
+                                    <MenuItem>Korean (Korea)</MenuItem>
+                                    <MenuItem>French (Quebec Canada, France) </MenuItem>
+                                    <MenuItem>Spanish (Spain)</MenuItem>
+                                </MenuList>
+                            </MenuPopover>
+                        </Menu>
                         <ToolbarDivider/>
                         <Menu>
                             <MenuTrigger>
@@ -184,7 +198,7 @@ function App({DropDownProps, ToolBarProps}: Props) {
                                 aria-labelledby={dropdownId}
                                 placeholder={"Select an Encrypt Method"}
                                 defaultValue={'---'}
-                                // disabled={selectedDecrypt !== '---'}
+                                disabled={['Basic', 'Increasing'].includes(selectedDecrypt)}
                                 style={{
                                     marginTop: "24px",
                                     marginRight: "8px"
@@ -203,7 +217,7 @@ function App({DropDownProps, ToolBarProps}: Props) {
                                 aria-labelledby={dropdownId}
                                 placeholder={"Select an Decrypt Method"}
                                 defaultValue={'---'}
-                                // disabled={selectedEncrypt !== '---'}
+                                disabled={['Basic', 'Increasing', 'Group', 'Multi Encrypt Sheet', 'Multi Encrypt Sheet and Grouped', "Use Word as Encrypt Sheet"].includes(selectedEncrypt)}
                                 style={{
                                     marginTop: "24px",
                                     marginRight: "8px"
@@ -289,6 +303,121 @@ function App({DropDownProps, ToolBarProps}: Props) {
                                 </div>
                             )}
 
+                            {selectedEncrypt === 'Multi Encrypt Sheet' && (
+                                <div>
+                                    <div style={{flex: 1, display: "flex", flexDirection: "column", width: "50%"}}>
+                                        <div style={{marginTop: "16px"}}>
+                                            <Text style={{marginRight: "16px"}}>Custom Encrypt Sheet: </Text>
+                                            <Input />
+                                        </div>
+                                        <div style={{marginTop: "16px"}}>
+                                            <Text style={{marginRight: "16px"}}>Move Steps: </Text>
+                                            <SpinButton defaultValue={1} min={1} max={1000} />
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {selectedEncrypt === 'Multi Encrypt Sheet and Grouped' && (
+                                <div>
+                                    <div style={{flex: 1, display: "flex", flexDirection: "column", width: "50%"}}>
+                                        <div style={{marginTop: "16px"}}>
+                                            <Text style={{marginRight: "16px"}}>Custom Encrypt Sheet: </Text>
+                                            <Input/>
+                                        </div>
+                                    </div>
+
+                                    <div style={{marginTop: "16px"}}>
+                                        <div style={{display: 'flex', alignItems: "center", marginBottom: "12px"}}>
+                                            <Text style={{marginRight: "8px"}}>Group Size</Text>
+                                            <SpinButton
+                                                label="Group Size"
+                                                value={groupSize}
+                                                onChange={(_, data) => setGroupSize(Number(data.value))}
+                                                min={1}
+                                                max={1000}
+                                            />
+                                        </div>
+
+                                        {groupSize > 0 && inputText && (
+                                            <div style={{display: 'flex', gap: '16px'}}>
+                                                <div style={{display: 'flex', flexWrap: 'wrap', gap: '8px'}}>
+                                                    {Array.from({length: Math.ceil(inputText.length / groupSize)}, (_, index) => {
+                                                        const group = inputText.slice(index * groupSize, (index + 1) * groupSize);
+                                                        const isFocused = focusedIndex === index;
+
+                                                        return (
+                                                            <div
+                                                                key={index}
+                                                                style={{
+                                                                    padding: '8px 12px',
+                                                                    borderRadius: '8px',
+                                                                    border: `2px solid ${isFocused ? '#0078D4' : '#ccc'}`,
+                                                                    backgroundColor: isFocused ? '#E5F1FB' : '#f5f5f5',
+                                                                    fontFamily: 'Consolas',
+                                                                    minWidth: '40px',
+                                                                    textAlign: 'center'
+                                                                }}
+                                                            >
+                                                                {group}
+                                                            </div>
+                                                        );
+                                                    })}
+                                                </div>
+
+                                                <div style={{display: 'flex', flexDirection: 'column', gap: '8px'}}>
+                                                    {Array.from({length: Math.ceil(inputText.length / groupSize)}, (_, index) => (
+                                                        <SpinButton
+                                                            key={index}
+                                                            label={`Value ${index + 1}`}
+                                                            defaultValue={1}
+                                                            min={0}
+                                                            max={100}
+                                                            onFocus={() => setFocusedIndex(index)}
+                                                            onBlur={() => setFocusedIndex(null)}
+                                                        />
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+
+                            {selectedEncrypt === 'Use Word as Encrypt Sheet' && (
+                                <div>
+                                    <div style={{flex: 1, display: "flex", flexDirection: "column", width: "50%"}}>
+                                        <div style={{marginTop: "16px"}}>
+                                            <Text style={{marginRight: "16px"}}>Word: </Text>
+                                            <Input/>
+                                        </div>
+                                        <div style={{marginTop: "16px"}}>
+                                            <Checkbox label={"Should the index of Character A be 0?"}
+                                                style={{marginLeft: "-8px"}}
+                                            />
+                                        </div>
+                                        <div style={{marginTop: "16px"}}>
+                                            <Text style={{marginRight: "16px"}}>Move Steps: </Text>
+                                            <SpinButton defaultValue={1} min={1} max={1000}/>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {selectedDecrypt === "Basic" && (
+                                <div style={{marginTop: "16px"}}>
+                                <Text style={{marginRight: "16px"}}>Move Steps: </Text>
+                                    <Input/>
+                                </div>
+                            )}
+
+                            {selectedDecrypt === "Increasing" && (
+                                <div style={{marginTop: "16px"}}>
+                                    <Text style={{marginRight: "16px"}}>Initial Move Steps: </Text>
+                                    <Input/>
+                                </div>
+                            )}
+
                             <Field label="Result" style={{marginTop: '16px'}}>
                                 <div style={{display: 'flex', alignItems: 'center'}}>
                                     <Input/>
@@ -306,6 +435,6 @@ function App({DropDownProps, ToolBarProps}: Props) {
             </div>
         </FluentProvider>
     );
-};
+}
 
 export default App;
